@@ -1,12 +1,17 @@
 // lib/hooks/client-profile/useClientProfile.ts
 
 import { useState, useEffect } from 'react'
-import { auth, db } from '@/lib/firebase'
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
-import { User } from 'firebase/auth'
-import { calculateAge } from '@/lib/functions/client-profile/calculateAge'
+import { db } from '@/lib/firebase'
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  DocumentReference,
+} from 'firebase/firestore'
+import { useAuth } from '@/contexts/UserContext' // Import useAuth
 
-interface ClientProfile {
+export interface ClientProfile {
   fullName: string
   dateOfBirth: string
   gender: string
@@ -27,60 +32,78 @@ export const useClientProfile = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchProfile = async (user: User) => {
-    try {
-      const profileRef = doc(db, 'clientProfiles', user.uid)
-      const profileSnap = await getDoc(profileRef)
-      if (profileSnap.exists()) {
-        setProfile(profileSnap.data() as ClientProfile)
-      } else {
-        console.log('No profile found, creating a new one.')
-        // Initialize a new profile if not exists
-        const newProfile: ClientProfile = {
-          fullName: user.displayName || '',
-          dateOfBirth: '',
-          gender: '',
-          email: user.email || '',
-          height: 0,
-          weight: 0,
-          activityLevel: '',
-        }
-        await setDoc(profileRef, newProfile)
-        setProfile(newProfile)
-      }
-    } catch (err: unknown) {
-      console.error('Error fetching profile:', err)
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('An unexpected error occurred while fetching the profile.')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { user, loading: authLoading } = useAuth() // Get user and auth loading state
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchProfile(user)
-      } else {
-        setProfile(null)
+    if (authLoading) {
+      return // Wait until the auth state is initialized
+    }
+
+    if (!user) {
+      setError('User not authenticated.')
+      setLoading(false)
+      return
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const profileRef: DocumentReference<ClientProfile> = doc(
+          db,
+          'clientProfiles',
+          user.uid
+        ) as DocumentReference<ClientProfile>
+
+        const profileSnap = await getDoc(profileRef)
+        if (profileSnap.exists()) {
+          setProfile(profileSnap.data())
+        } else {
+          console.log('No profile found, creating a new one.')
+          const newProfile: ClientProfile = {
+            fullName: user.displayName || '',
+            dateOfBirth: '',
+            gender: '',
+            email: user.email || '',
+            height: 0,
+            weight: 0,
+            activityLevel: '',
+            phone: '',
+            address: '',
+            medicalHistory: '',
+            fitnessGoals: '',
+            preferredWorkoutTimes: '',
+            dietaryPreferences: '',
+          }
+          await setDoc(profileRef, newProfile)
+          setProfile(newProfile)
+        }
+      } catch (err: unknown) {
+        console.error('Error fetching profile:', err)
+        if (err instanceof Error) {
+          setError(err.message)
+        } else {
+          setError('An unexpected error occurred while fetching the profile.')
+        }
+      } finally {
         setLoading(false)
       }
-    })
+    }
 
-    return () => unsubscribe()
-  }, [])
+    fetchProfile()
+  }, [user, authLoading])
 
   const updateProfile = async (updatedProfile: Partial<ClientProfile>) => {
-    if (!auth.currentUser) {
+    if (!user) {
       setError('No authenticated user found.')
       return
     }
 
     try {
-      const profileRef = doc(db, 'clientProfiles', auth.currentUser.uid)
+      const profileRef: DocumentReference<ClientProfile> = doc(
+        db,
+        'clientProfiles',
+        user.uid
+      ) as DocumentReference<ClientProfile>
+
       await updateDoc(profileRef, updatedProfile)
       setProfile((prev) => (prev ? { ...prev, ...updatedProfile } : prev))
     } catch (err: unknown) {
@@ -98,6 +121,5 @@ export const useClientProfile = () => {
     loading,
     error,
     updateProfile,
-    calculateAge, // Exporting the calculateAge function if needed elsewhere
   }
 }

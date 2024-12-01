@@ -4,8 +4,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Roboto, Open_Sans } from 'next/font/google'
 import Header from '@/components/layout/header/Header'
-
-
+import { UserProvider } from '@/contexts/UserContext'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -35,12 +34,10 @@ export default function RootLayout({
         className={`antialiased bg-background text-text ${roboto.variable} ${openSans.variable}`}
         suppressHydrationWarning={true}
       >
-        
-         
-            <Header />
-            {children}
-          
-      
+        <UserProvider>
+          <Header />
+          {children}
+        </UserProvider>
       </body>
     </html>
   )

@@ -1,11 +1,19 @@
 // app/client-portal/page.tsx
+
 'use client'
+
 import React, { useState } from 'react'
-import ModalButton from '@/components/ui/buttons/ModalButton' // Ensure correct import path
-import EditProfileModal from '@/components/modals/client-profile/EditProfileModal' // Ensure correct import path
+import EditProfileModal from '@/components/modals/client-profile/EditProfileModal'
+import UserProfileBox from '@/components/user-profile/UserProfileBox'
+import { useClientProfile } from '@/lib/hooks/client-profile/useClientProfile'
+import { useWorkoutPrograms } from '@/lib/hooks/workout-programs/useWorkoutPrograms'
+import WorkoutProgramList from '@/components/workout-programs/WorkoutProgramList'
+import CreateWorkoutProgramModal from '@/components/modals/workout-programs/CreateWorkoutProgramModal'
+import { useAuth } from '@/contexts/UserContext' // Import useAuth
 
 const ClientPortalPage: React.FC = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false)
+  const [isCreateProgramOpen, setIsCreateProgramOpen] = useState<boolean>(false)
 
   const handleOpenEditProfile = () => {
     setIsEditProfileOpen(true)
@@ -15,19 +23,100 @@ const ClientPortalPage: React.FC = () => {
     setIsEditProfileOpen(false)
   }
 
+  const handleOpenCreateProgram = () => {
+    setIsCreateProgramOpen(true)
+  }
+
+  const handleCloseCreateProgram = () => {
+    setIsCreateProgramOpen(false)
+  }
+
+  const { user, loading: authLoading } = useAuth()
+
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+  } = useClientProfile()
+  const {
+    programs,
+    loading: programsLoading,
+    error: programsError,
+  } = useWorkoutPrograms()
+
+  if (authLoading || profileLoading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-background px-4'>
+        <p>Loading your profile...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-background px-4'>
+        <p>You must be logged in to access this page.</p>
+      </div>
+    )
+  }
+
+  if (profileError) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-background px-4'>
+        <p className='text-red-500'>Error: {profileError}</p>
+      </div>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-background px-4'>
+        <p>No profile data found.</p>
+      </div>
+    )
+  }
+
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center bg-background dark:bg-background-dark px-4'>
-      <h1 className='text-3xl text-primary dark:text-primary-dark mb-6'>
+    <div className='min-h-screen flex flex-col items-center bg-background px-4 py-6'>
+      <h1 className='text-3xl text-primary mb-6'>
         Welcome to the Client Portal!
       </h1>
 
-      {/* ModalButton to Open EditProfileModal */}
-      <ModalButton onClick={handleOpenEditProfile}>Edit Profile</ModalButton>
+      <UserProfileBox profile={profile} onEdit={handleOpenEditProfile} />
 
-      {/* EditProfileModal Component */}
+      {/* Workout Programs Section */}
+      <div className='mt-10 w-full max-w-md'>
+        <h2 className='text-2xl font-semibold mb-4 text-center'>
+          Your Workout Programs
+        </h2>
+
+        {programsLoading ? (
+          <p>Loading your workout programs...</p>
+        ) : programsError ? (
+          <p className='text-red-500'>Error: {programsError}</p>
+        ) : programs.length > 0 ? (
+          <WorkoutProgramList programs={programs} />
+        ) : (
+          <div className='text-center'>
+            <p>You have no workout programs. Would you like to create one?</p>
+            <button
+              onClick={handleOpenCreateProgram}
+              className='mt-4 px-4 py-2 bg-primary text-white font-semibold rounded-md shadow-md hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary'
+            >
+              Create Workout Program
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Modals */}
       <EditProfileModal
         isOpen={isEditProfileOpen}
         onClose={handleCloseEditProfile}
+      />
+      <CreateWorkoutProgramModal
+        isOpen={isCreateProgramOpen}
+        onClose={handleCloseCreateProgram}
       />
     </div>
   )
