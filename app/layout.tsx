@@ -3,19 +3,20 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Roboto, Open_Sans } from 'next/font/google'
-import { ThemeProvider } from 'next-themes'
 import Header from '@/components/layout/header/Header'
+
+
 
 const roboto = Roboto({
   subsets: ['latin'],
   variable: '--font-roboto',
-  weight: ['400', '700'], // Adjust weights as needed
+  weight: ['400', '700'],
 })
 
 const openSans = Open_Sans({
   subsets: ['latin'],
   variable: '--font-open-sans',
-  weight: ['400', '700'], // Adjust weights as needed
+  weight: ['400', '700'],
 })
 
 export const metadata: Metadata = {
@@ -29,19 +30,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' data-theme='light'>
       <body
         className={`antialiased bg-background text-text ${roboto.variable} ${openSans.variable}`}
+        suppressHydrationWarning={true}
       >
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='light'
-          enableSystem={false}
-          enableColorScheme={true}
-        >
-          <Header />
-          {children}
-        </ThemeProvider>
+        
+         
+            <Header />
+            {children}
+          
+      
       </body>
     </html>
   )
