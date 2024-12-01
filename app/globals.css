@@ -1,21 +1,64 @@
+/* app/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Define CSS Variables for Fonts */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-roboto: 'Roboto', sans-serif;
+  --font-open-sans: 'Open Sans', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Apply Fonts */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-open-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-roboto);
+}
+
+/* Light Theme Styles */
+body {
+  background-color: theme('colors.background');
+  color: theme('colors.text');
+}
+
+.bg-secondary {
+  background-color: theme('colors.background-secondary');
+}
+
+.text-primary {
+  color: theme('colors.primary');
+}
+
+.text-secondary {
+  color: theme('colors.secondary');
+}
+
+.text-highlight {
+  color: theme('colors.highlight');
+}
+
+/* Dark Theme Styles */
+.dark body {
+  background-color: theme('colors.background-dark');
+  color: theme('colors.text-dark');
+}
+
+.dark .bg-secondary {
+  background-color: theme('colors.background-secondary-dark');
+}
+
+.dark .text-primary {
+  color: theme('colors.primary-dark');
+}
+
+.dark .text-secondary {
+  color: theme('colors.secondary-dark');
+}
+
+.dark .text-highlight {
+  color: theme('colors.highlight-dark');
 }
