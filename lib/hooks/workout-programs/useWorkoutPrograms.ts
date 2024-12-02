@@ -36,12 +36,18 @@ export const useWorkoutPrograms = () => {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const programsData: WorkoutProgram[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-          description: doc.data().description,
-          createdAt: doc.data().createdAt.toDate(),
-        }))
+        const programsData: WorkoutProgram[] = snapshot.docs.map((doc) => {
+          const data = doc.data()
+          return {
+            id: doc.id,
+            name: data.name,
+            description: data.description,
+            totalWeeks: data.totalWeeks,
+            totalPhases: data.totalPhases,
+            phases: data.phases || [], // Provide a default value if necessary
+            createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+          }
+        })
         setPrograms(programsData)
         setLoading(false)
       },
