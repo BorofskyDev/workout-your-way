@@ -1,9 +1,13 @@
+// components/modals/workout-programs/PhaseBox.tsx
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import { Phase } from '@/lib/hooks/workout-programs/types'
 import { useDailyRoutines } from '@/lib/hooks/daily-routines/useDailyRoutines'
 import CreateDailyRoutineModal from '@/components/modals/daily-routines/CreateDailyRoutineModal'
+import { DailyRoutine } from '@/lib/hooks/daily-routines/types'
+
 interface PhaseBoxProps {
   phaseNumber: number
   totalWeeks: number
@@ -17,7 +21,7 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
 }) => {
   const [name, setName] = useState<string>('')
   const [selectedWeeks, setSelectedWeeks] = useState<number[]>([])
-  const [weeklyTemplate, setWeeklyTemplate] = useState<(string | null)[]>(
+  const [weeklyTemplate, setWeeklyTemplate] = useState<(DailyRoutine | null)[]>(
     Array(7).fill(null)
   )
 
@@ -33,7 +37,7 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
       weeklyTemplate: { days: weeklyTemplate },
     }
     onPhaseDataChange(phaseData)
-  }, [name, selectedWeeks, weeklyTemplate])
+  }, [name, selectedWeeks, weeklyTemplate, onPhaseDataChange])
 
   // Generate week options
   const weekOptions = Array.from({ length: totalWeeks }, (_, i) => i + 1)
@@ -50,11 +54,11 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
 
   const handleDailyRoutineChange = (
     dayIndex: number,
-    routineId: string | null
+    routine: DailyRoutine | null
   ) => {
     setWeeklyTemplate((prevTemplate) => {
       const newTemplate = [...prevTemplate]
-      newTemplate[dayIndex] = routineId
+      newTemplate[dayIndex] = routine
       return newTemplate
     })
   }
@@ -139,37 +143,41 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
                 >
                   Create Daily Routine
                 </button>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                {[
-                  'Sunday',
-                  'Monday',
-                  'Tuesday',
-                  'Wednesday',
-                  'Thursday',
-                  'Friday',
-                  'Saturday',
-                ].map((day, index) => (
-                  <div key={index}>
-                    <label className='block text-sm font-medium text-text mb-1'>
-                      {day}
-                    </label>
-                    <select
-                      value={weeklyTemplate[index] || ''}
-                      onChange={(e) =>
-                        handleDailyRoutineChange(index, e.target.value || null)
-                      }
-                      className='mt-1 block w-full px-3 py-2 bg-background border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary'
-                    >
-                      <option value=''>Select a daily routine</option>
-                      {dailyRoutines.map((routine) => (
-                        <option key={routine.id} value={routine.id}>
-                          {routine.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4'>
+                  {[
+                    'Sunday',
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                  ].map((day, index) => (
+                    <div key={index}>
+                      <label className='block text-sm font-medium text-text mb-1'>
+                        {day}
+                      </label>
+                      <select
+                        value={weeklyTemplate[index]?.id || ''}
+                        onChange={(e) => {
+                          const routineId = e.target.value || null
+                          const routine =
+                            dailyRoutines.find((r) => r.id === routineId) ||
+                            null
+                          handleDailyRoutineChange(index, routine)
+                        }}
+                        className='mt-1 block w-full px-3 py-2 bg-background border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary'
+                      >
+                        <option value=''>Select a daily routine</option>
+                        {dailyRoutines.map((routine) => (
+                          <option key={routine.id} value={routine.id}>
+                            {routine.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </>
