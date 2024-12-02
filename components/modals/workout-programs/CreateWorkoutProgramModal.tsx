@@ -169,6 +169,7 @@ const CreateWorkoutProgramModal: React.FC<CreateWorkoutProgramModalProps> = ({
           dailyRoutines: [], // Initialize as empty arrays
           sets: [],
           exercises: [],
+          userId: ''
         }}
         createWorkoutProgram={createWorkoutProgram}
         closeParentModal={onClose}

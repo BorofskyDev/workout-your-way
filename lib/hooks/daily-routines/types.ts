@@ -12,6 +12,6 @@ export interface DailyRoutine {
   name: string
   description?: string
   type: RoutineType
-  sets: string[] // Array of set IDs
+  sets: string[] // Array of Set IDs
   createdAt: Date
 }

@@ -52,6 +52,7 @@ export const useWorkoutPrograms = () => {
             sets: data.sets || [],
             exercises: data.exercises || [],
             createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+            userId: data.userId,
           }
         })
         setPrograms(programsData)

@@ -12,6 +12,7 @@ import CreateWorkoutProgramModal from '@/components/modals/workout-programs/Crea
 import WorkoutProgramDetails from '@/components/workout-programs/WorkoutProgramDetails'
 import { WorkoutProgram } from '@/lib/hooks/workout-programs/types'
 import { useAuth } from '@/contexts/UserContext'
+import { useRouter } from 'next/navigation' // For navigation
 
 const ClientPortalPage: React.FC = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false)
@@ -56,6 +57,12 @@ const ClientPortalPage: React.FC = () => {
 
   const handleCloseDetails = () => {
     setSelectedProgram(null)
+  }
+
+  const router = useRouter()
+
+  const navigateToActiveProgram = () => {
+    router.push('/client-portal/active-program')
   }
 
   if (authLoading || profileLoading) {
@@ -137,6 +144,20 @@ const ClientPortalPage: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Active Programs Section */}
+        <div className='mt-10 w-full max-w-md'>
+          <h2 className='text-2xl font-semibold mb-4 text-center'>
+            Active Programs
+          </h2>
+
+          <button
+            onClick={navigateToActiveProgram}
+            className='w-full px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500'
+          >
+            View Active Program
+          </button>
+        </div>
       </div>
 
       {/* Modals */}

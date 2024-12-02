@@ -43,6 +43,7 @@ export const useSets = () => {
             name: data.name,
             description: data.description,
             exercises: data.exercises || [],
+            userId: data.userId,
             createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
           }
         })
