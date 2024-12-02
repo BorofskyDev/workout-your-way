@@ -11,24 +11,9 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { useAuth } from '@/contexts/UserContext'
+import { Exercise} from './types'
 
-export interface Exercise {
-  id: string
-  name: string
-  description?: string
-  bodyParts: string[]
-  measurements: MeasurementOptions
-  weight?: boolean
-  createdAt: Date
-}
 
-export interface MeasurementOptions {
-  reps?: boolean
-  amap?: boolean
-  timed?: boolean
-  laps?: boolean
-  [key: string]: boolean | undefined
-}
 
 export const useExercises = () => {
   const { user, loading: authLoading } = useAuth()

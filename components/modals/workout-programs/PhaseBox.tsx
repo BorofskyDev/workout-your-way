@@ -132,6 +132,13 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
                 </button>
               </div>
             ) : (
+              <div>
+                <button
+                  onClick={handleOpenCreateDailyRoutineModal}
+                  className='mt-2 px-4 py-2 bg-primary text-white font-semibold rounded-md shadow-md hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary'
+                >
+                  Create Daily Routine
+                </button>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 {[
                   'Sunday',
@@ -162,6 +169,7 @@ const PhaseBox: React.FC<PhaseBoxProps> = ({
                     </select>
                   </div>
                 ))}
+              </div>
               </div>
             )}
           </>

@@ -11,18 +11,11 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { useAuth } from '@/contexts/UserContext'
-
-export interface Set {
-  id: string
-  name: string
-  description?: string
-  exercises: string[]
-  createdAt: Date
-}
+import { Set as SetType } from './types' // Import from types.ts
 
 export const useSets = () => {
   const { user, loading: authLoading } = useAuth()
-  const [sets, setSets] = useState<Set[]>([])
+  const [sets, setSets] = useState<SetType[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -43,13 +36,13 @@ export const useSets = () => {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const setsData: Set[] = snapshot.docs.map((doc) => {
+        const setsData: SetType[] = snapshot.docs.map((doc) => {
           const data = doc.data()
           return {
             id: doc.id,
             name: data.name,
             description: data.description,
-            exercises: data.exercises|| [],
+            exercises: data.exercises || [],
             createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
           }
         })
@@ -66,7 +59,7 @@ export const useSets = () => {
     return () => unsubscribe()
   }, [user, authLoading])
 
-  const createSet = async (setData: Omit<Set, 'id' | 'createdAt'>) => {
+  const createSet = async (setData: Omit<SetType, 'id' | 'createdAt'>) => {
     if (!user) {
       setError('User not authenticated.')
       return

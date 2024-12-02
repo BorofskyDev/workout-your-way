@@ -1,8 +1,13 @@
+// components/modals/workout-programs/PhasesCreationModal.tsx
+
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from '../Modal'
 import { Phase, WorkoutProgram } from '@/lib/hooks/workout-programs/types'
+import { useDailyRoutines } from '@/lib/hooks/daily-routines/useDailyRoutines'
+import { useSets } from '@/lib/hooks/sets/useSets'
+import { useExercises } from '@/lib/hooks/exercises/useExercises'
 import PhaseBox from './PhaseBox'
 
 interface PhasesCreationModalProps {
@@ -24,20 +29,25 @@ const PhasesCreationModal: React.FC<PhasesCreationModalProps> = ({
 }) => {
   const [phasesData, setPhasesData] = useState<Phase[]>([])
   const [error, setError] = useState<string | null>(null)
-
+  const { dailyRoutines } = useDailyRoutines()
+  const { sets } = useSets()
+  const { exercises } = useExercises()
   const { name, totalPhases } = programData
 
   // Initialize phasesData if not already initialized
-  React.useEffect(() => {
+  useEffect(() => {
     if (phasesData.length !== totalPhases) {
-      const initialPhases = Array.from({ length: totalPhases }, () => ({
-        name: '',
-        weeks: [],
-        weeklyTemplate: { days: Array(7).fill(null) },
-      }))
+      const initialPhases: Phase[] = Array.from(
+        { length: totalPhases },
+        () => ({
+          name: '',
+          weeks: [],
+          weeklyTemplate: { days: Array(7).fill(null) },
+        })
+      )
       setPhasesData(initialPhases)
     }
-  }, [totalPhases])
+  }, [totalPhases, phasesData.length])
 
   const handlePhaseDataChange = (index: number, updatedPhase: Phase) => {
     setPhasesData((prevPhases) => {
@@ -62,10 +72,49 @@ const PhasesCreationModal: React.FC<PhasesCreationModalProps> = ({
       // Additional validation as needed
     }
 
-    // Combine programData with phasesData
-    const completeProgramData = {
+    // Gather IDs of used daily routines
+    const usedDailyRoutineIds = new Set<string>()
+    phasesData.forEach((phase) => {
+      phase.weeklyTemplate.days.forEach((dailyRoutine) => {
+        if (dailyRoutine && dailyRoutine.id) {
+          usedDailyRoutineIds.add(dailyRoutine.id)
+        }
+      })
+    })
+
+    // Filter daily routines based on used IDs
+    const usedDailyRoutines = dailyRoutines.filter((dr) =>
+      usedDailyRoutineIds.has(dr.id)
+    )
+
+    // Similarly, gather sets and exercises used in these daily routines
+    const usedSetIds = new Set<string>()
+    usedDailyRoutines.forEach((dr) => {
+      dr.sets.forEach((setId: string) => {
+        // Explicitly type 'setId'
+        usedSetIds.add(setId)
+      })
+    })
+
+    const usedSets = sets.filter((set) => usedSetIds.has(set.id))
+
+    const usedExerciseIds = new Set<string>()
+    usedSets.forEach((set) => {
+      set.exercises.forEach((exerciseId: string) => {
+        // Explicitly type 'exerciseId'
+        usedExerciseIds.add(exerciseId)
+      })
+    })
+
+    const usedExercises = exercises.filter((ex) => usedExerciseIds.has(ex.id))
+
+    // Combine programData with phasesData and used data
+    const completeProgramData: Omit<WorkoutProgram, 'id' | 'createdAt'> = {
       ...programData,
       phases: phasesData,
+      dailyRoutines: usedDailyRoutines,
+      sets: usedSets,
+      exercises: usedExercises,
     }
 
     try {

@@ -8,10 +8,13 @@ import {
   where,
   onSnapshot,
   addDoc,
+  deleteDoc,
+  doc,
   Timestamp,
 } from 'firebase/firestore'
 import { WorkoutProgram } from './types'
-import { useAuth } from '@/contexts/UserContext' // Import useAuth
+import { useAuth } from '@/contexts/UserContext'
+
 
 export const useWorkoutPrograms = () => {
   const { user, loading: authLoading } = useAuth()
@@ -44,7 +47,10 @@ export const useWorkoutPrograms = () => {
             description: data.description,
             totalWeeks: data.totalWeeks,
             totalPhases: data.totalPhases,
-            phases: data.phases || [], // Provide a default value if necessary
+            phases: data.phases || [],
+            dailyRoutines: data.dailyRoutines || [],
+            sets: data.sets || [],
+            exercises: data.exercises || [],
             createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
           }
         })
@@ -84,10 +90,28 @@ export const useWorkoutPrograms = () => {
     }
   }
 
+  const deleteWorkoutProgram = async (programId: string) => {
+    if (!user) {
+      setError('User not authenticated.')
+      return
+    }
+
+    try {
+      const programDocRef = doc(db, 'workoutPrograms', programId)
+      await deleteDoc(programDocRef)
+    } catch (err: unknown) {
+      console.error('Error deleting workout program:', err)
+      setError(
+        'An unexpected error occurred while deleting the workout program.'
+      )
+    }
+  }
+
   return {
     programs,
     loading,
     error,
     createWorkoutProgram,
+    deleteWorkoutProgram,
   }
 }

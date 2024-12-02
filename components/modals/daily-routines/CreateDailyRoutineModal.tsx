@@ -7,7 +7,7 @@ import Modal from '../Modal'
 import { useDailyRoutines } from '@/lib/hooks/daily-routines/useDailyRoutines'
 import { useSets } from '@/lib/hooks/sets/useSets'
 import CreateSetModal from '@/components/modals/sets/CreateSetModal'
-import { Set } from '@/lib/hooks/sets/useSets'
+import { Set } from '@/lib/hooks/sets/types'
 import { DailyRoutine, RoutineType } from '@/lib/hooks/daily-routines/types'
 import { Reorder } from 'framer-motion'
 
@@ -223,7 +223,7 @@ const CreateDailyRoutineModal: React.FC<CreateDailyRoutineModalProps> = ({
                     <Reorder.Item
                       key={set.id}
                       value={set}
-                      className='flex items-center justify-between p-2 bg-white border border-gray-300 rounded-md shadow-sm cursor-grab'
+                      className='flex items-center justify-between p-2 bg-background-secondary border border-gray-300 rounded-md shadow-sm cursor-grab'
                     >
                       <span>{set.name}</span>
                       <button

@@ -9,11 +9,16 @@ import { useClientProfile } from '@/lib/hooks/client-profile/useClientProfile'
 import { useWorkoutPrograms } from '@/lib/hooks/workout-programs/useWorkoutPrograms'
 import WorkoutProgramList from '@/components/workout-programs/WorkoutProgramList'
 import CreateWorkoutProgramModal from '@/components/modals/workout-programs/CreateWorkoutProgramModal'
-import { useAuth } from '@/contexts/UserContext' // Import useAuth
+import WorkoutProgramDetails from '@/components/workout-programs/WorkoutProgramDetails'
+import { WorkoutProgram } from '@/lib/hooks/workout-programs/types'
+import { useAuth } from '@/contexts/UserContext'
 
 const ClientPortalPage: React.FC = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false)
   const [isCreateProgramOpen, setIsCreateProgramOpen] = useState<boolean>(false)
+  const [selectedProgram, setSelectedProgram] = useState<WorkoutProgram | null>(
+    null
+  )
 
   const handleOpenEditProfile = () => {
     setIsEditProfileOpen(true)
@@ -38,11 +43,20 @@ const ClientPortalPage: React.FC = () => {
     loading: profileLoading,
     error: profileError,
   } = useClientProfile()
+
   const {
     programs,
     loading: programsLoading,
     error: programsError,
   } = useWorkoutPrograms()
+
+  const handleSelectProgram = (program: WorkoutProgram) => {
+    setSelectedProgram(program)
+  }
+
+  const handleCloseDetails = () => {
+    setSelectedProgram(null)
+  }
 
   if (authLoading || profileLoading) {
     return (
@@ -94,8 +108,24 @@ const ClientPortalPage: React.FC = () => {
           <p>Loading your workout programs...</p>
         ) : programsError ? (
           <p className='text-red-500'>Error: {programsError}</p>
+        ) : selectedProgram ? (
+          <WorkoutProgramDetails
+            program={selectedProgram}
+            onClose={handleCloseDetails}
+          />
         ) : programs.length > 0 ? (
-          <WorkoutProgramList programs={programs} />
+          <div className='flex flex-col gap-4'>
+            <button
+              onClick={handleOpenCreateProgram}
+              className='mt-4 px-4 py-2 bg-primary text-white font-semibold rounded-md shadow-md hover:bg-secondary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary'
+            >
+              Create Workout Program
+            </button>
+            <WorkoutProgramList
+              programs={programs}
+              onSelectProgram={handleSelectProgram}
+            />
+          </div>
         ) : (
           <div className='text-center'>
             <p>You have no workout programs. Would you like to create one?</p>

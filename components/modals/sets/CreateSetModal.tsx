@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import Modal from '../Modal'
 import { useSets } from '@/lib/hooks/sets/useSets'
 import { useExercises } from '@/lib/hooks/exercises/useExercises'
-import { Set } from '@/lib/hooks/sets/useSets'
+import { Set } from '@/lib/hooks/sets/types'
 import CreateExerciseModal from '../exercises/CreateExerciseModal'
 
 interface CreateSetModalProps {
@@ -163,7 +163,7 @@ const CreateSetModal: React.FC<CreateSetModalProps> = ({ isOpen, onClose }) => {
                       }
                       className='block w-full px-3 py-2 bg-background border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary'
                     >
-                      <option value='' disabled>
+                      <option  value='' disabled>
                         Select an exercise
                       </option>
                       {exercises.map((exercise) => (

@@ -1,3 +1,5 @@
+// lib/hooks/daily-routines/useDailyRoutines.ts
+
 import { useState, useEffect } from 'react'
 import { db } from '@/lib/firebase'
 import {
@@ -9,13 +11,7 @@ import {
   Timestamp,
 } from 'firebase/firestore'
 import { useAuth } from '@/contexts/UserContext'
-
-export interface DailyRoutine {
-  id: string
-  name: string
-  description?: string
-  createdAt: Date
-}
+import { DailyRoutine } from './types' // Import from types.ts
 
 export const useDailyRoutines = () => {
   const { user, loading: authLoading } = useAuth()
@@ -46,6 +42,8 @@ export const useDailyRoutines = () => {
             id: doc.id,
             name: data.name,
             description: data.description,
+            type: data.type,
+            sets: data.sets || [],
             createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
           }
         })

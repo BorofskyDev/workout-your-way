@@ -1,19 +1,28 @@
 // lib/hooks/workout-programs/types.ts
 
-export interface WorkoutProgram {
-  id: string // Firestore document ID
-  name: string
-  description?: string
-  totalWeeks: number
-  totalPhases: number
-  phases: Phase[]
-  createdAt: Date
-}
+import { DailyRoutine } from '@/lib/hooks/daily-routines/types'
+import { Set } from '@/lib/hooks/sets/types'
+import { Exercise } from '@/lib/hooks/exercises/types'
 
 export interface Phase {
   name: string
-  weeks: number[] // Array of week numbers
-  weeklyTemplate: {
-    days: (string | null)[] // Array of 7 daily routine IDs or null
-  }
+  weeks: number[]
+  weeklyTemplate: WeeklyTemplate
+}
+
+export interface WeeklyTemplate {
+  days: (DailyRoutine | null)[]
+}
+
+export interface WorkoutProgram {
+  id: string
+  name: string
+  description?: string
+  totalPhases: number
+  totalWeeks: number
+  phases: Phase[]
+  dailyRoutines: DailyRoutine[]
+  sets: Set[]
+  exercises: Exercise[]
+  createdAt: Date
 }
