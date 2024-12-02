@@ -161,7 +161,15 @@ const CreateWorkoutProgramModal: React.FC<CreateWorkoutProgramModalProps> = ({
       <PhasesCreationModal
         isOpen={isPhasesModalOpen}
         onClose={handleClosePhasesModal}
-        programData={{ name, description, totalWeeks, totalPhases }}
+        programData={{
+          name,
+          description,
+          totalWeeks,
+          totalPhases,
+          dailyRoutines: [], // Initialize as empty arrays
+          sets: [],
+          exercises: [],
+        }}
         createWorkoutProgram={createWorkoutProgram}
         closeParentModal={onClose}
       />
