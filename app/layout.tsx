@@ -2,13 +2,13 @@
 
 import './globals.css'
 import type { Metadata } from 'next'
-import { Roboto, Open_Sans } from 'next/font/google'
+import { Inconsolata, Open_Sans } from 'next/font/google'
 import Header from '@/components/layout/header/Header'
 import { UserProvider } from '@/contexts/UserContext'
 
-const roboto = Roboto({
+const inconsolata = Inconsolata({
   subsets: ['latin'],
-  variable: '--font-roboto',
+  variable: '--font-inconsolata',
   weight: ['400', '700'],
 })
 
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang='en' data-theme='light'>
       <body
-        className={`antialiased bg-background text-text ${roboto.variable} ${openSans.variable}`}
+        className={`antialiased bg-background text-text ${inconsolata.variable} ${openSans.variable}`}
         suppressHydrationWarning={true}
       >
         <UserProvider>

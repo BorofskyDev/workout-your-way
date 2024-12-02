@@ -13,11 +13,11 @@ export default {
     extend: {
       colors: {
         // Light Theme Colors
-        background: '#F2F2F5',
-        'background-secondary': '#DFDEFC',
-        text: '#111112',
-        primary: '#13118A',
-        secondary: '#75070E',
+        background: '#343434',
+        'background-secondary': '#2d2c33',
+        text: '#e7e7e8',
+        primary: '#7596e9',
+        secondary: '#e92f3b',
         highlight: '#05522D',
 
         // Dark Theme Colors

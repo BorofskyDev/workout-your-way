@@ -6,7 +6,7 @@
 
 /* Define CSS Variables for Fonts */
 :root {
-  --font-roboto: 'Roboto', sans-serif;
+  --font-roboto: 'Inconsolata', sans-serif;
   --font-open-sans: 'Open Sans', sans-serif;
 }
 
@@ -16,7 +16,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-roboto);
+  font-family: var(--font-inconsolata);
 }
 
 /* Light Theme Styles */

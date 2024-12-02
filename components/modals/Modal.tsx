@@ -49,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
           {/* Modal Content */}
           <motion.div
-            className='fixed  bg-background-secondary dark:bg-background-secondary-dark rounded-lg shadow-lg z-50 p-6 w-full max-w-md transform -translate-x-1/2 -translate-y-1/2'
+            className='fixed top-10  margin-auto bg-background-secondary dark:bg-background-secondary-dark rounded-lg shadow-lg z-50 p-6 w-full max-w-md transform'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
